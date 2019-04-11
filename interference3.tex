@@ -1,1443 +1,233 @@
 \documentclass{patmorin}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{amsthm}
+\usepackage{amsmath,amsfonts,amsthm}
 \usepackage{graphicx}
-\usepackage{enumerate}
+\usepackage{natbib}
+
+\usepackage{paralist}
+
 \usepackage{pat}
-\usepackage{hyperref}
 
-\title{\MakeUppercase{Dual Circumference and Collinear Sets}%
-    \thanks{This work was partly funded by NSERC and MRI.}}
+\title{\MakeUppercase{Low-Interference Networks in 1D (and beyond?)}%
+    \thanks{This work was partly funded by NSERC.}}
 
-\author{Vida Dujmovi\'c%
-        \thanks{School of Computer Science and Electrical Engineering, 
-                University of Ottawa}\,\, and 
-        Pat Morin%
-        \thanks{School of Computer Science, Carleton University}}
+\author{TBD}
 
-\newcommand{\dual}[1]{{#1}^\star}
-\newcommand{\note}[2]{{\color{red}[#1:~#2]}}
 
 \begin{document}
 \maketitle
 
 
 \begin{abstract}
-   We show that, if an $n$-vertex triangulation $T$ of maximum degree
-   $\Delta$ has a dual that contains a cycle of length $\ell$, then $T$
-   has a non-crossing straight-line drawing in which some set, called
-   a \emph{collinear set}, of $\Omega(\ell/\Delta^4)$ vertices lie on
-   a line.  Using the current lower bounds on the length of longest cycles
-   in 3-regular 3-connected graphs, this implies that every $n$-vertex
-   planar graph of maximum degree $\Delta$ has a collinear set of size
-   $\Omega(n^{0.8}/\Delta^4)$.  Very recently, Dujmovi\'c \etal\ (SODA
-   2019) showed that, if $S$ is a collinear set in a triangulation $T$
-   then, for any point set $X\subset\R^2$ with $|X|=|S|$, $T$ has a
-   non-crossing straight-line drawing in which the vertices of $S$ are
-   drawn on the points in $X$.  Because of this, collinear sets have
-   numerous applications in graph drawing and related areas.
+  
 \end{abstract}
 
 \section{Introduction}
 
-Throughout this paper, all graphs are simple and finite and have at least
-4 vertices.  For a planar graph $G$, we say that a set $S\subseteq V(G)$
-is a \emph{collinear set} if $G$ has a non-crossing straight-line drawing
-in which the vertices of $S$ are all collinear.  A \emph{plane graph} is
-a planar graph $G$ along with a particular non-crossing drawing of $G$.
-The \emph{dual} $\dual{G}$ of a plane graph $G$ is the graph whose
-vertex set $V(\dual{G})$ is the set of faces in $G$ and in which $fg\in
-E(\dual{G})$ if and only if the faces $f$ and $g$ of $G$ have at least
-one edge in common.  The \emph{circumference}, $c(G)$, of a graph $G$
-is the length of the longest cycle in $G$. In \secref{proof}, we prove
-the following theorem:
+A \emph{geometric graph} $G$ is a (simple, undirected) graph whose vertex set $V(G)$ is a subset of $\R^d$ and where each edge $vw$ in the edge set $E(G)$ is treated as an open line segment with endpoints $v$ and $w$. 
 
-\begin{thm}\thmlabel{main}
-  Let $T$ be a triangulation of maximum degree $\Delta$ whose dual
-  $\dual{T}$ has circumference $\ell$. Then $T$ has a collinear set of
-  size $\Omega(\ell/\Delta^4)$.
-\end{thm}
+For any vertex $v\in V(G)$, we define the \emph{transmission radius} $r_G(v)=\max\{ \|vw\| : vw\in E(G) \}$ and the \emph{transmission disk} $d_G(v)=\{ x\in\R^d : \|vx\| \le r(v) \}$.  Intuitively, the transmission radius of $v$ represents how loudly $v$ must broadcast to be heard by all its neighbours.
 
-The dual of a triangulation is a 3-connected cubic planar graph.
-The study of the circumference of 3-connected cubic planar graphs
-has a long and rich history going back to at least 1884 when Tait
-\cite{tait:remarks} conjectured that every such graph is Hamiltonian.  In
-1946, Tait's conjecture was disproved by Tutte who gave a non-Hamiltonian
-46-vertex example \cite{tutte:on}.  Repeatedly replacing vertices of
-Tutte's graph with copies of itself gives a family of graphs, $\langle G_i:i\in
-\Z\rangle$ in which $G_i$ has $46\cdot 45^i$ vertices and circumference at
-most $45\cdot44^i$.  Stated another way, $n$-vertex members of the
-family have circumference $O(n^\alpha)$, for $\alpha=\log_{44}(45) < 0.9941$.
-The current best upper bound of this type is due to Gr\"unbaum and
-Walther \cite{grunbaum.walther:shortness} who construct a 24-vertex
-non-Hamiltonian cubic 3-connected planar graph, resulting in a family
-of graphs in which $n$-vertex members have circumference $O(n^{\alpha})$
-for $\alpha=\log_{23}(22)< 0.9859$.
-
-A series of results has steadily improved the lower bounds on the
-circumference of $n$-vertex  (not necessarily planar) 3-connected
-cubic graphs.  Barnette \cite{barnette:trees} showed that, for
-every $n$-vertex 3-connected cubic graph $G$, $c(G)=\Omega(\log n)$.
-Bondy and Simonovits \cite{bondy.simonovits:longest} improved this bound
-to $e^{\Omega(\sqrt{\log n})}$ and conjectured that it can be improved
-to $\Omega(n^\alpha)$ for some $\alpha>0$.  Jackson \cite{jackson:longest}
-confirmed this conjecture with $\alpha=\log_2(1+\sqrt{5})-1 > 0.6942$.
-Billinksi \etal\ \cite{bilinksi.jackson.ea:circumference} improved
-this to the solution of $4^{1/\alpha}-3^{1/\alpha}=2$, which implies
-$\alpha>0.7532$.  The current record is held by Liu, Yu, and Zhang
-\cite{liu.yu.zhang:circumference} who show that $\alpha>0.8$.  
-
-It is known that any planar graph of maximum degree $\Delta$ can be
-triangulated so that the resulting triangulation has maximum degree
-$\lceil 3\Delta/2\rceil+11$ \cite{kant.bodlaender:triangulating}. This
-fact, together with \thmref{main} and the result of Liu, Yu, and Zhang
-\cite{liu.yu.zhang:circumference}, implies the following corollary:
-
-\begin{cor}\corlabel{main}
-  Every $n$-vertex triangulation of maximum degree $\Delta$ contains a
-  collinear set of size $\Omega(n^{0.8}/\Delta^4)$.
-\end{cor}
-
-%A longstanding open problem on circumference is \emph{Barnette's
-%Conjecture}, which asserts that every \emph{bipartite} 3-connected cubic
-%planar graph is Hamiltonian. Note that, if Barnette's conjecture is true,
-%this would imply that every triangulation in which every vertex has even
-%degree contains a collinear set of linear size.  \note{PM}{Think about
-%whether this even makes sense. For example, the assumption can only be
-%true when $n$ is odd.  Maybe there's a little trick we can do to make
-%it more generally applicable, like when only a small number, $k$, of
-%vertices have odd degree.}
-
-It is known that every planar graph $G$ has a collinear set of size
-$\Omega(\sqrt{n})$ \cite{bose.dujmovic.ea:polynomial,dujmovic:utility}
-. \corref{main} therefore improves on this bound for bounded-degree planar
-graphs and, indeed for the family of $n$-vertex planar graphs of maximum
-degree $\Delta\in O(n^{\delta})$, with $\delta < 0.075$.  For example,
-the triangulations dual to Gr\"unbaum and Walther's construction have
-maximum degree $\Delta \in O(\log n)$.  As discussed below, this implies
-that there exists $n$-vertex triangulations of maximum degree $O(\log
-n)$ whose largest collinear set has size $O(n^{0.9859})$.  \corref{main}
-implies that every $n$-vertex planar graph of maximum degree $O(\log n)$
-has a collinear set of size $\Omega(n^{0.8})$.
-
-Recently, Dujmovi\'c \etal\ \cite{dujmovic.frati.ea:every} have shown
-that every collinear set is \emph{free}. That is, for any planar graph
-$G$, any collinear set $S\subseteq V(G)$, and any set $X\subset\R^2$
-with $|X|=|S|$, there exists a non-crossing straight-line drawing of $G$
-in which the vertices of $S$ are drawn on the points of $X$.  Because of
-this, collinear sets have immediate applications in graph drawing and
-related areas.  For applications of \corref{main}, including untangling
-\cite{cibulka:untangling,pach.tardos:untangling,watanabe:open,goaoc.kratochvil.ea:untangling,kang.pikhurko.ea:untangling,bose.dujmovic.ea:polynomial,dalozzo.dujmovic.ea:drawing,dujmovic:utility,ravsky.verbitsky:on},
-column
-planarity~\cite{barba.evans.ea:column,evans.kusters.ea:column,dalozzo.dujmovic.ea:drawing,dujmovic:utility},
-universal point
-subsets~\cite{digiacomo.liotta.ea:how,angelini.binucci.ea:universal,dalozzo.dujmovic.ea:drawing,dujmovic:utility},
-and partial simultaneous geometric
-drawings~\cite{evans.kusters.ea:column,barba.hoffmann.ea:column,angelini.evans.ea:sefe,blasius.kobourov.ea:simultaneous,dujmovic:utility}
-the reader is referred to Dujmovi\'c \cite{dujmovic:utility}
-and Dujmovi\'c \etal\ \cite[Section~1.1]{dujmovic.frati.ea:every}.
-\corref{main} gives improved bounds for all of these problems for planar
-graphs of maximum $\Delta\in o(n^{0.075})$.
-
-For example, it is known that every $n$-vertex planar geometric graph
-can be untangled while keeping some set of $\Omega(n^{0.25})$ vertices
-fixed \cite{bose.dujmovic.ea:polynomial} and that there are $n$-vertex
-planar geometric graphs that cannot be untangled while keeping any set of
-$\Omega(n^{0.4948})$ vertices fixed \cite{cano.toth.ea:upper}. Although
-asymptotically tight bounds are known for paths \cite{cibulka:untangling},
-trees \cite{goaoc.kratochvil.ea:untangling}, outerplanar graphs
-\cite{goaoc.kratochvil.ea:untangling}, planar graphs of treewidth
-two \cite{ravsky.verbitsky:on}, and planar graphs of treewidth three
-\cite{dalozzo.dujmovic.ea:drawing}, progress on the general case has
-been stuck for 10 years due to the fact that the exponent $0.25$ comes
-from two applications of Dilworth's Theorem.  Thus, some substantially
-new idea appears to be needed. By relating collinear/free sets to
-dual circumference, the current paper presents an effective new idea.
-Indeed, \corref{main} implies that every bounded-degree $n$-vertex
-planar geometric graph can be untangled while keeping $\Omega(n^{0.4})$
-vertices fixed.  Note that, even for bounded-degree planar graphs,
-$\Omega(n^{0.25})$ was the best previously-known lower bound.
-
-Our work opens two avenues for further progress:
-
-\begin{enumerate}
-   \item Lower bounds on the circumference of 3-regular
-      3-connected graphs is an active area of research. Indeed,
-      the $\Omega(n^{0.8})$ lower bound of Liu, Yu, and Zhang
-      \cite{liu.yu.zhang:circumference} is less than a year old.  Any
-      further progress on these lower bounds will translate immediately
-      to an improved bound in \corref{main} and all its applications.
-
-   \item It is possible that the dependence on $\Delta$ can be removed
-      from \thmref{main} and \corref{main}, thus making these results
-      applicable to all planar graphs, regardless of maximum degree.
-\end{enumerate}
-
-\section{Proof of \thmref{main}}
-\seclabel{proof}
-
-Let $G$ be a plane graph.  We treat the vertices of $G$ as points,
-the edges of $G$ as closed curves, and the faces of $G$ as closed sets
-(so that a face contains all the edges on its boundary and an edge
-contains both its endpoints).  Whenever we consider subgraphs of $G$
-we treat them as having the same embedding as $G$.  Similarly, if we
-consider a graph $G'$ that is homeomorphic\footnote{We say that a graph $G'$ is homeomorphic to $G$ if $G'$ can be obtained from $G$ by repeatedly contracting an edge of $G$ that is incident to a degree-2 vertex.} to $G$ then we assume
-that the edges of $G'$---each of which represents a path in $G$
-whose internal vertices all have degree 2---inherit their embedding from
-the paths they represent in $G$.
-
-Finally, if we consider the dual $\dual{G}$ of $G$ then we treat it
-as a plane graph in which each vertex $f$ is represented as a point in
-the interior of the face $f$ of $G$ that it represents.  The edges of
-$\dual{G}$ are embedded so that an edge $fg$ is contained in the union of
-the two faces $f$ and $g$ of $G$, it intersects the interior of exactly
-one edge of $G$ that is common to $f$ and $g$, and this intersection
-consists of a single point.
-
-A \emph{proper good curve} $C$ for a plane graph $G$ is a
-Jordan curve with the following properties:
-\begin{enumerate}
-	\item[\emph{proper}:] for any edge $xy$ of $G$, $C$ either contains $xy$, intersects
-  $xy$ in a single point (possibly an endpoint), or is disjoint
-  from $xy$; and
-  \item[\emph{good}:] $C$ contains at least one point in the interior of
-  some face of $G$.
-\end{enumerate}
-
-Da Lozzo \etal\ \cite{dalozzo.dujmovic.ea:drawing} show that proper good
-curves define collinear sets:
-
-\begin{thm}\thmlabel{dalozzo}
-  In a plane graph $G$, a set $S\subseteq V(G)$ is a collinear set if
-  and only if there is a proper good curve for $G$ that contains $S$.
-\end{thm}
-
-For a triangulation $T$, let $v(T)$ denote the size of a largest
-collinear set in $T$.  We will show that, for any triangulation $T$
-of maximum degree $\Delta$
-whose dual is $\dual{T}$, $v(T)=\Theta(c(\dual{T})/\Delta^4)$ by relating proper good curves in $T$ to cycles in $\dual{T}$.
-
-As shown by Ravsky and Verbitsky
-\cite{ravsky.verbitsky:on,ravsky.verbitsky:on-arxiv}, the inequality $v(T)
-\le c(\dual{T})$ is easy: If $T$ is a triangulation that has a proper
-good curve $C$ containing $k$ vertices, then a slight deformation of
-$C$ produces a proper good curve that contains no vertices. This curve
-intersects a cyclic sequence of faces $f_0,\ldots,f_{k'-1}$ of $T$
-with $k'\ge k$.  In this sequence, $f_i$ and $f_{(i+1)\bmod k'}$ share
-an edge, for every $i\in\{0,\ldots,k'-1\}$, so this sequence is a closed
-walk in the dual $\dual{T}$ of $T$.  The properness of the original curve
-and the fact that each face of $T$ is a triangle ensures that $f_i\neq
-f_j$ for any $i\neq j$, so this sequence is a cycle in $\dual{T}$ of
-length $k'\ge k$.  Therefore, $c(\dual{T})\ge v(T)$. From the result
-of Gr\"unbaum and Walther described above, this implies that there are
-$n$-vertex triangulations $T$ such that $v(T) = O(n^{0.9859})$.
-
-The other direction, lower-bounding $v(T)$ in terms $c(\dual{T})$
-is more difficult. Not every cycle $C$ of length $\ell$ in $\dual{T}$
-can be easily transformed into a proper good curve containing a similar
-number of vertices in $C$.  In the next section, we describe three
-parameters $\tau$, $\rho$, and $\kappa$ of a cycle $C$ in $\dual{T}$
-and show that $C$ can always be transformed into a proper good curve
-containing $\Omega(\kappa)$ vertices of $T$.
-
-\subsection{Faces that are Touched, Pinched, and Caressed}
-
-Throughout the remainder of this section, $T$ is a triangulation
-whose dual is $\dual{T}$ and $C$ is a cycle in $\dual{T}$.
-Refer to \figref{touched-pinched-caressed} for the following definitions.
-We say that a face $f$ of $\dual{T}$
-\begin{enumerate}
-  \item is \emph{touched} by $C$ if $f\cap C\neq \emptyset$;
-  \item is \emph{pinched} by $C$ if $f\cap C$ is a cycle or has more than 
-    one connected component; and
-  \item is \emph{caressed} by $C$ if it is touched but not pinched by $C$.
-\end{enumerate}
-
-\begin{figure}
-  \begin{center}
-    \includegraphics{figs/t0t1-2}
-  \end{center}
-  \caption{Faces of $\dual{T}$ that are pinched and caressed by $C$. $C$
-  is bold, caressed faces are teal, pinched faces are pink, and untouched
-  faces are unshaded.} \figlabel{touched-pinched-caressed}
-\end{figure}
-
-
-Since $C$ is almost always the cycle of interest, we will usually say
-that a face $f$ of $\dual{T}$ is touched, pinched, or caressed, without
-specifically mentioning $C$.  We will frequently use the values $\tau$,
-$\rho$, and $\kappa$ to denote the number of faces of $\dual{T}$ in
-some region that are $\tau$ouched, $\rho$inched or $\kappa$aressed.
-Observe that, since every face that is touched is either pinched or
-caressed, we have the identity $\tau = \rho + \kappa$.
-
-\begin{lem}\lemlabel{cycle-to-curve}
-   If $C$ caresses $\kappa$ faces of $\dual{T}$ then $T$ has a proper
-   good curve that contains at least $\kappa/4$ vertices so, by
-   \thmref{dalozzo}, $v(T)\ge \kappa/4$.
-\end{lem}
-
-\begin{proof}
-  Let $F$ be the set of faces in $\dual{T}$ that are caressed by $C$. Each
-  element $u\in F$ corresponds to a vertex of $T$ so we will treat $F$ as
-  a set of vertices in $T$.  Consider the subgraph $T[F]$ of $T$ induced
-  by $F$.  The graph $T[F]$ is planar and has $\kappa$ vertices. Therefore,
-  by the 4-Colour Theorem \cite{robertson.seymour.ea:four-colour}, $T[F]$
-  contains an independent set $F'\subseteq F$ of size at least $\kappa/4$.
-
-  We claim that there is a proper good curve for $T$ that contains all
-  the vertices in $F'$.  To see this, first observe that the cycle $C$ in
-  $\dual{T}$ already defines a proper good curve (that does not contain
-  any vertices of $T$) that we also call $C$.  We perform
-  local modifications on $C$ so that it contains all the vertices in $F'$.
-
-  For any vertex $u\in F'$, let $w_0,\ldots,w_{d-1}$ denote the neighbours
-  of $u$ in cyclic order.  The curve $C$ intersects some contiguous
-  subsequence $uw_i,\ldots,uw_j$ of the edges adjacent to $u$.  Since $u$
-  is caressed, this sequence does not contain all edges incident
-  to $u$. Therefore, the curve $C$ crosses the edge $w_{i-1}w_i$, then
-  crosses $uw_i,\ldots,uw_j$, and then crosses the edge $w_j w_{j+1}$.
-  We modify $C$ by removing the portion between the first and last of
-  these crossings and replacing it with a curve that contains $u$ and is
-  contained in the two triangles $w_{i-1}uw_i$ and $w_juw_{j+1}$. (See
-  \figref{cycle-to-curve}.)
-
-  \begin{figure}
-     \begin{center}
-	\begin{tabular}{cc}
-		\includegraphics{figs/cycle-to-curve-1} &
-		\includegraphics{figs/cycle-to-curve-2}
-	\end{tabular}
-     \end{center}
-     \caption{Transforming the dual cycle $C$ into a proper good curve $C'$ containing $u$.}
-	  \figlabel{cycle-to-curve}
-  \end{figure}
-
-  After performing this local modification for each $u\in F'$ we have
-  a curve $C'$ that contains every vertex $u\in F'$.  All that remains
-  is verify that $C'$ is good and proper for $T$. That $C'$ is good for
-  $T$ is obvious.  That $C'$ is proper for $T$ follows from the following two
-  observations: (i)~$C'$ does not contain any two adjacent vertices (since
-  $F'$ is an independent set); and (ii)~if $C'$ contains a vertex $u$,
-  then it does not intersect the interior of any edge incident to $u$.
-\end{proof}
-
-\lemref{cycle-to-curve} reduces our problem to finding a cycle in
-$\dual{T}$ that caresses many faces.  It is tempting to hope that
-any sufficiently long cycle in $\dual{T}$ caresses many faces, but
-this is not true; \figref{few-caressed} shows that even a Hamiltonian
-cycle $C$ in $\dual{T}$ may caress only four faces, two inside $C$ and
-two outside of $C$.  In this example, there is an obvious sequence of
-faces $f_0,\ldots,f_k$, all contained in the interior of $C$ where $f_i$
-shares an edge with $f_{i+1}$ for each $i\in\{0,\ldots,k-1\}$.  The only
-faces caressed by $C$ are the endpoints $f_0$ and $f_k$ of this sequence.
-
-\begin{figure}
-   \begin{center}
-       \includegraphics{figs/two-caressed}
-   \end{center}
-   \caption{A Hamiltonian cycle $C$ in $\dual{T}$ that caresses only four faces.}
-   \figlabel{few-caressed}
-\end{figure}
-
-Our strategy is to define a tree structure, $T_0$ on groups of faces
-contained in the interior of $C$ and a similar structure, $T_1$ on groups
-of faces in the exterior of $C$.  We will then show that every leaf of
-$T_0$ or $T_1$ contains a face caressed by $C$. In \figref{few-caressed},
-the tree $T_0$ is the path $f_0,\ldots,f_k$ and, indeed, the leaves $f_0$
-and $f_k$ of this tree are caressed by $C$.  After a non-trivial amount
-of analysis of the trees $T_0$ and $T_1$, we will eventually show that,
-if $C$ does not caress many faces, then $T_0$ and $T_1$ have many nodes,
-but few leaves.  Therefore $T_0$ and $T_1$ have many degree-2 nodes.
-This abundance of degree-2 nodes makes it possible to perform a surgery
-on $C$ that increases the number of caressed faces.  Performing this
-surgery repeatedly will then produce a curve $C$ that caresses many faces.
-
-%The following useful lemma shows that the example in \figref{few-caressed}
-%is tight.  
-A path $P=v_1,\ldots,v_r$ in $\dual{T}$ is a \emph{chord
-path} (for $C$) if $v_1,v_r\in V(C)$ and $v_2,\ldots,v_{r-1}\not\in
-V(C)$.  Note that this definition implies that the interior vertices
-$v_2,\ldots,v_{r-1}$ of $P$ are either all contained in the interior of
-$C$ or all contained in the exterior of $C$.
-
-\begin{lem}\lemlabel{one-caressed}
-   Let $P$ be a chord path for $C$ and let $L$ and $R$ be the two faces
-   of $P\cup C$ that each contain $P$ in their boundary. Then $R$
-   contains at least one face of $\dual{T}$ that is caressed by $C$.
-\end{lem}
-
-\begin{proof}
-   The proof is by
-   induction on the number, $t$, of faces of $\dual{T}$ contained in $R$.
-   If $t=1$, then $R$ is a face of $\dual{T}$ and it is caressed by $C$.
-
-   If $t>1$, then consider the face $f$ of $\dual{T}$ that is contained
-   in $R$ and has the first edge of $P$ on its boundary.  Refer to
-   \figref{one-caressed}. Since $t>1$, $X=R\setminus f$ is non-empty. The
-   set $X$ may have several connected components $X_1,\ldots,X_k$, but
-   each $X_i$ has a boundary that contains a chord path $P_i$ for $C$.
-   We can therefore apply induction on $P_1$ (or any $P_i$) using $R=X_1$
-   in the inductive hypothesis.
-  \begin{figure}
-     \begin{center}
-	\begin{tabular}{cc}
-		\includegraphics{figs/one-caressed-1} &
-		\includegraphics{figs/one-caressed-2}
-	\end{tabular}
-     \end{center}
-	  \caption{The proof of \lemref{one-caressed}.}
-	  \figlabel{one-caressed}
-  \end{figure}
-\end{proof}
-
-\subsection{Auxilliary Graphs and Trees: $H$, $\tilde{H}$, $T_0$, and $T_1$}
-
-Refer to \figref{auxilliary}. Consider the auxilliary
-graph $H$ with vertex set $V(H)\subseteq V(\dual{T})$ and whose edge set
-consist of the edges of $C$ plus those edges of $\dual{T}$ that belong
-to any face pinched by $C$. Let $v_0,\ldots,v_{r-1}$ be the clockwise cyclic sequence of vertices on some face $f$ of $\dual{T}$ that is pinched by $C$.  
-We identify three kinds of vertices that are \emph{special} with respect to $f$:
-\begin{enumerate}
-  \item A vertex $v_i$ is special of \emph{Type~A} if $v_{i-1}v_i$ is an edge of $C$ and $v_iv_{i+1}$ is not an edge of $C$.
-  \item A vertex $v_i$ is special of \emph{Type~B} if $v_{i-1}v_i$ is not an edge of $C$ and $v_iv_{i+1}$ is an edge of $C$.
-  \item A vertex $v_i$ is special of \emph{Type~Y} if $v_i$ not incident to any edge of $C$ and $v_i$ has degree 3 in $H$.
-\end{enumerate}
-
-  \begin{figure}
-     \begin{center}\begin{tabular}{cc}
-		\includegraphics[width=.45\textwidth]{figs/t0t1-2} &
-		\includegraphics[width=.45\textwidth]{figs/t0t1-3} \\
-                (a) & (b) \\[1em]
-		\includegraphics[width=.45\textwidth]{figs/t0t1-4} & 
-		\includegraphics[width=.45\textwidth]{figs/t0t1-5} \\
-                (c) & (d)
-     \end{tabular}\end{center}
-	  \caption{(a)~the cycle $C$ in $\dual{T}$ with faces classified as pinched or caressed; (b)~the auxilliary graph $H$; (c)~the auxilliary graph $\tilde{H}$ with keeper paths highlighted; (d)~the trees $T_0$ and $T_1$.}
-	  \figlabel{auxilliary}
-  \end{figure}
-
-
-We say that a chord path $v_i,\ldots,v_j$ is a \emph{keeper} with respect to
-$f$ if $v_i$ is special of Type~A, $v_j$ is special of Type~B, and none
-of $v_{i+1},\ldots,v_{j-1}$ are special.  We let $\tilde{H}$ denote the
-subgraph of $H$ containing all the edges of $C$ and all the edges of
-all paths that are keepers with respect to some pinched face $f$ of $\dual{T}$.
-
-It is worth emphasizing at this point that, by definition, every keeper is
-entirely contained in the boundary of at least one face $f$ of $\dual{T}$.
-This property will be useful shortly.
-
-Let $\tilde{H}'$ denote the graph that is homeormophic to $\tilde{H}$
-but does not contain any degree 2 vertices.  That is, $\tilde{H}'$
-is the minor of $\tilde{H}$ obtained by repeatedly contracting an edge
-incident a degree-2 vertex.  The graph $\tilde{H}'$ naturally inherits an
-embedding from the embedding of $\tilde{H}$.  This embedding partitions
-the edges of $\tilde{H}'$ into three sets:
-\begin{enumerate}
-  \item The set $B$ of edges that are contained in (the embedding of) $C$;
-  \item The set $E_0$ of edges whose interiors are contained in the
-  interior of (the embedding of) $C$; and
-  \item The set $E_1$ of edges whose interiors are contained in the
-  exterior of (the embedding of) $C$.
-\end{enumerate}
-
-Observe that, for each $i\in\{0,1\}$, the graph $H_i$ whose edges are
-exactly those in $B\cup E_i$ is outerplanar, since all vertices of $H_i$
-are on a single face, whose boundary is $C$.  Let $\dual{H_i}$ be dual
-of $H_i$ and let $T_i$ be the subgraph of $\dual{H_i}$ whose edges are
-all those dual to the edges of $E_i$. From the outerplanarity of $H_i$,
-it follows that $T_i$ is a tree.  
-
-Each vertex of $T_i$ corresponds to a face of $\tilde{H}$.  From this
-point onwards, we will refer to the vertices of $T_i$ as \emph{nodes}
-to highlight this fact, so that a node $u$ of $T_i$ is synonymous with
-the subset of $\R^2$ contained in the corresponding face of $\tilde{H}$.
-In the following, when we say that a node $u$ of $T_i$ contains a face $f$
-of $\dual{T}$ we mean that $f$ is one of the faces of $\dual{T}$ whose
-union makes up $u$.  The degree, $\delta_u$ of any node $u$ in $T_i$
-is exactly equal to the number of keeper paths on the boundary of $u$.
-
-The following lemma allows us to direct our effort towards proving that
-one of $T_0$ or $T_1$ has many leaves.
-
-\begin{lem}\lemlabel{one-caressed-leaf}
-   Each leaf $u$ of $T_i$ contains at least one face of $\dual{T}$
-   that is caressed by $C$.
-\end{lem}
-
-\begin{proof}
-   The edge of $T_i$ incident to $u$ corresponds to a chord path $P$. The
-   graph $P\cup C$ has two faces with $P$ on its boundary, one of which
-   is $u$.  The lemma now follows immediately from \lemref{one-caressed},
-   with $R=u$.
-\end{proof}
-
-We will make use of the following well-known property of
-3-connected plane graphs.
-
-\begin{lem}\lemlabel{one-shared-edge}
-   If $T$ has $n\ge 4$ vertices then any two faces of $\dual{T}$ share at 
-   most one edge.
-\end{lem}
-
-\begin{proof}
-   Suppose that two faces $f$ and $g$ share two edges $e_1$ and
-   $e_2$. Then $e_1$ and $e_2$ form an edge cutset of $\dual{T}$.
-   If $\dual{T}$ contains at least four vertices, then two of the
-   endpoints of $e_1$ and $e_2$ form a vertex cutset of $\dual{T}$
-   of size 2, contradicting the fact that $\dual{T}$ is 3-connected.
-   That $\dual{T}$ contains at least 4 vertices follows from Euler's
-   Formula, which gives the number of vertices in $\dual{T}$ as $2n-4\ge
-   4$ for all $n\ge 4$.
-\end{proof}
-
-
-\begin{lem}\lemlabel{many-caressed-or-high-degree}
-   Let $u$ be a node of $T_i$ and let $\rho_u$, $\kappa_u$, and $\delta_u$ denote the number of pinched faces of $\dual{T}$ in $u$, the number of caressed faces of $\dual{T}$ in $u$, and the degree of $u$ in $T_i$, respectively.  Then $\rho_u \le 2(\kappa_u+\delta_u)$.
-\end{lem}
-
-Before proving \lemref{many-caressed-or-high-degree}, we point out that
-the leading constant 2 is tight. \figref{tight} shows an example in
-which all $\rho_u=2k+1$ pinched faces of $\dual{T}$ are contained in a
-single (pink) node $u$ of $T_0$ that contains $\kappa_u=0$ caressed faces and
-has degree $\delta_u=k+2$.
-
-\begin{figure}
-  \begin{center}
-    \includegraphics{figs/tight}
-  \end{center}
-  \caption{An example showing the tightness of \lemref{many-caressed-or-high-degree}.}
-  \figlabel{tight}
-\end{figure}
-
-\begin{proof}
-   The proof is a discharging argument.  We assign each pinched face in 
-   $u$ a single unit of charge, so that the total charge is $\rho_u$.
-   We then describe a discharging procedure that preserves the total
-   charge.  After executing this procedure, pinched faces in $u$
-   have no charge, each caressed face in $u$ has charge at most 2,
-   and each keeper path in $u$ has charge at most 2.  Since there is a
-   bijection between keeper paths in $u$ and edges of $T_i$ incident to
-   $u$, this proves the result.
-
-   We now describe the discharging procedure, which is recursive and takes as
-   input a chord path $P$ that partitions $u$ into two parts $L$ and $R$.
-   We require as a precondition that there are $m\ge 1$ pinched faces
-   of $\dual{T}$ in $L$, each of which contains at least one edge of $P$ and
-   such that every edge of $P$ is contained in at least one of these faces.
-   During a recursive call, $P$ may have a charge $c\in\{0,1,2\}$. This
-   charge will be at most 1 if $m> 1$, but can be 2 if $m=1$.
-
-   To initialize the discharging procedure, we choose an arbitrary pinched
-   face $f$ contained in $u$.  The face $f$ begins with one unit of charge
-   and has $r\ge 2$ chord paths $P_1,\ldots,P_r$ on its boundary.
-   We move the charge from $f$ onto $P_1$ and apply the recursive
-   procedure to $P_1$, with a charge of 1 (with $L$ being the component
-   of $u\setminus P_1$ that contains $f$).  We then recursively apply the
-   discharging procedure on each of $P_2,\ldots,P_r$ with a charge of 0.
-
-   Next we describe each recursive step, during which we are given $P$
-   with some charge $c\in\{0,1,2\}$.  There are several cases to consider
-   (see \figref{discharging}):
-	\begin{figure}
-		\begin{center}
-		\begin{tabular}{cc}
-			\includegraphics{figs/discharge-2} &
-			\includegraphics{figs/discharge-3} \\
-			 2.a & 2.b \\[1.5em]
-			\includegraphics{figs/discharge-4} &
-			\includegraphics{figs/discharge-5} \\
-			 2.c & 3 
-		\end{tabular}
-		\end{center}
-		\caption{Discharging steps in the proof of
-		\lemref{many-caressed-or-high-degree}.}
-		\figlabel{discharging}
-	\end{figure}
-  \begin{enumerate}
-     \item $R$ contains no face of $\dual{T}$ that is pinched by $C$.
-     If $R$ is empty, then $P$ is a keeper path,
-     in which case we leave a charge of $c$ on it and we are done.
-     Otherwise $R$ is non-empty and \lemref{one-caressed}  ensures that
-     $R$ contains at least one caressed face $f$.  We move the charge
-     from $P$ onto $f$ and we are done.
-
-     \item $R$ contains a face $f$ that is pinched by $C$ and that shares
-     at least one edge with $P$.  We consider three subcases:
-     \begin{enumerate}
-	\item $f$ contains neither endpoint of $P$. In this case,
-	$R\setminus f$ has at least three connected components, $A$, $B$,
-	and $X_1,\ldots,X_k$, where $A$ and $B$ each contain an endpoint
-	of $P$ and each $X_i$ has a chord path $P_i$ in common
-	with $f$.  We recurse on each of these components so that each
-	of these components takes the place of $R$ in the recursion. When
-	recursing on $A$ we take one unit of charge from $P$ (if needed)
-	and place it on $A$'s chord path.  When recursing on $B$ we take
-	the second unit of charge from $P$ (if needed) and place it on
-	$B$'s chord path.  When recursing on $X_1$ we move the unit of
-	charge from $f$ to $P_1$.  When recursing on $X_2,\ldots,X_k$
-	we use no charge on $P_2,\ldots,P_k$.
-
-	\item $f$ contains exactly one endpoint of $P$.  In this case,
-	$R\setminus f$ has one connected component $A$ that contains
-	an endpoint of $P$ and one or more connected components
-	$X_1,\ldots,X_k$ where each $X_i$ has a chord path $P_i$ on the
-	boundary of $f$.
-	The path $P$ has a charge $c\le 2$.  When recursing on $X_1$
-	we assign all of $P$'s charge to the chord path $P_1$, which is
-	contained in the single pinched face $f$.
-	When recursing on $A$ we move the single unit of charge from $f$
-	to the chord path of $A$.
-
-        \item $f$ contains both endpoints of $P$.  We claim that,
-        in this case, $P$ must be on the boundary of more than one
-        pinched faces in $L$, otherwise $P$ would be a keeper path.
-        To see this, observe that the face $f$ contains both the first
-        edge $e_1$ and last edge $e_2$ of $P$. If $e_1=e_2$ because $P$
-        is a single edge, then it is certainly a keeper, which is not
-        possible. Otherwise, by
-        \lemref{one-shared-edge}, $e_1$ and $e_2$ are on the boundary of
-        two different faces in $L$.  By assumption, both of these faces
-        are pinched by $C$.
-
-        Therefore $P$ has at most one unit of charge assigned to it.
-        Now, $R\setminus f$ has one or more connected components
-        $X_1,\ldots,X_k$ sharing chord paths $P_1,\ldots,P_k$ with $f$
-        on which we recurse.  When recursing on $X_1$ we move the charge
-        from $P$ and the charge from $f$ to $P_1$.  When recursing on
-        the remaining $X_i$, $i\in\{2,\ldots,k\}$ we assign no charge
-        to $P_i$.
-  \end{enumerate}
-  \item $R$ contains at least one pinched face, but no pinched face in $R$
-  shares an edge with $P$.  In this case, consider the face $g$ of $H$
-  that is contained in $R$ and has $P$ on its boundary. By definition,
-  $g$ contains no pinched faces of $\dual{T}$, but $g$ is touched by $C$,
-  so $g$ contains at least one caressed face\footnote{In fact $g$ contains at
-  least two caressed faces, one for each endpoint of $P$.} $f$ of $\dual{T}$.
-  We move the $c$ units of charge from $P$ onto $f$.
-
-  Now, $R$ still contains one or more pinched faces
-  $f_1,\ldots,f_k$, where each $f_i$ shares part of a chord path $P_i$ with 
-  $g$.
-  On each such face $f_i$, we run the initialization procedure described
-  above except that we recurse only on the chord paths of $f_i$ that
-  do not share edges with $g$. i.e., we do not recurse on the chord
-  path $P_i$.
-\end{enumerate}
-   This completes the description of the discharging procedure, and the proof.
-\end{proof}
-
-
-
-
-%The following lemma says that if $C$ touches many faces then it must caress many faces, or $T_0$ and $T_1$ must have many degree-2 nodes.
-%
-%\begin{lem}\lemlabel{many-caressed-or-many-degree-2}
-%  Let $\tau$, $\rho$, and $\kappa$ denote the number of nodes touched,
-%  pinched, and caressed by $C$, respectively and let $m_2$ denote the
-%  total degree of degree-2 nodes in $T_0$ and $T_1$.  Then $11\kappa +
-%  4m_2 \ge \tau$.
-%\end{lem}
-%
-%\begin{proof}
-%  Since every face of $\dual{T}$ touched by $C$ is either pinched or
-%  caressed, for any node $u$ of $T_0$ or $T_1$, we have
-%  \begin{equation}
-%       \kappa_u + \rho_u = \tau_u \enspace . \eqlabel{tpc}
-%  \end{equation}
-%  From \lemref{many-caressed-or-high-degree}, we have 
-%  \[
-%      2(\kappa_u+\delta_u) \ge \rho_u \enspace .
-%  \]
-%  Combining the preceding equations and summing over all $u$ in $T_0$
-%  and $T_1$, we ge
-%  \begin{equation}
-%       3\kappa + 2\delta \ge \tau \enspace . \eqlabel{tpc-a}
-%  \end{equation}
-%  The total number of edges in $T_0$
-%  and $T_1$ is $\delta/2$ and therefore the total number, $m$,
-%  of nodes in $T_0$ and $T_1$ is $\delta/2+1$. Using the inequality
-%  $2m\ge \delta$ in \eqref{tpc-a} we obtain 
-%  \begin{equation}
-%       3\kappa + 4m \ge \tau \enspace .  \eqlabel{tpc-b}
-%  \end{equation}
-%  The number, $m_{\ge 3}$ of nodes of degree at least three in $T_0$
-%  and $T_1$ is less than the number, $m_1$, of leaves.  Therefore,
-%  the number $m_2$ of degree 2 nodes is at least
-%  \[
-%     m_2 = m - m_1 - m_{\ge 3} \ge m-2m_1 \enspace .
-%  \]
-%  Using the inequality $m\le m_2+2m_1$  in \eqref{tpc-b}, we obtain:
-%  \begin{equation}
-%       3\kappa + 4(m_2+2m_1) \ge \tau \enspace .  \eqlabel{tpc-c}
-%  \end{equation}
-%  By \lemref{one-caressed}, each leaf contains at least one face caressed
-%  by $C$, so $\kappa \ge m_1$. Using this inequality in \eqref{tpc-c}
-%  we obtain
-%  \begin{equation}
-%       3\kappa + 4(m_2+2\kappa) \ge \tau \enspace .  \eqlabel{tpc-d}
-%  \end{equation}
-%  which simplifies to $11\kappa + 4m_2 \ge \tau$, as required.
-%\end{proof}
-
-\subsection{Bad Nodes}
-
-%From \lemref{many-caressed-or-many-degree-2} we know that $C$ either
-%caresses $\tau/22=\Omega(\tau)$ faces, or the total number of degree-2
-%nodes in $T_0$ and $T_1$ is at least $\tau/8=\Omega(\tau)$.  This helps
-%understand the example in \figref{few-caressed}, in which $C$ caresses
-%only 4 faces and each of $T_0$ and $T_1$ is a path, so nearly all their
-%nodes are degree-2. \note{PM}{\lemref{many-caressed-or-many-degree-2} is only ever used in this paragraph. Delete it?}
-
-We say that a node of $T_i$ is \emph{bad} if it has degree 2 and
-contains no face of $\dual{T}$ that is caressed by $C$.  We now move
-from studying individual nodes of $T_0$ and $T_1$ to studying global
-quantities associated with $T_0$ and $T_1$.  From this point on, for
-each $i\in\{0,1\}$,
-\begin{enumerate}
-  \item $\tau_i$, $\rho_i$, and $\kappa_i$ refer the total numbers of faces contained in nodes of $T_i$ that are touched, pinched, and caressed by $C$, respectively; 
-  \item $n_i$ refers to the number of nodes of $T_i$;
-  \item $\delta_i = 2(n_i-1)$ is the total degree of all nodes in $T_i$; and
-  \item $b_i$ is the number of bad nodes in $T_i$.
-\end{enumerate}
-
-
-\begin{lem}\lemlabel{few-caressed-implies-many-nodes}
-%  Let $\tau_i$, $\rho_i$, and $\kappa_i$ denote the number of faces
-%  in $\dual{T}$ contained in nodes of $T_i$ that are touched, pinched,
-%  and caressed by $C$ and let $n_i$ denote the number of nodes of $T_i$.
-  If $\kappa_i \le \tau_i/6$ then $n_i\ge \tau_i/8$.
-\end{lem}
-
-\begin{proof}
-	From \lemref{many-caressed-or-high-degree} we know $\rho_i \le 2(\kappa_i+\delta_i)$, so
-  \[
-  \tau_i  = \kappa_i + \rho_i
-     \le 3\kappa_i + 2\delta_i 
-     = 3\kappa_i + 4(n_i-1) 
-     \le \tau_i/2 + 4n_i \enspace ,
-  \]
-  and reorganizing the left- and right-hand sides gives the desired result.
-\end{proof}
-
-\begin{lem}\lemlabel{most-nodes-are-bad}
-%   Let $n_i$ and $b_i$ denote the number of nodes and bad nodes in
-%   $T_i$. 
-   For any $0<\epsilon < 1$, if $b_i \le (1-\epsilon)n_i$, then
-   $\kappa_i = \Omega(\epsilon\tau_i)$.
-\end{lem}
-
-\begin{proof}
-   Partition the nodes of $T_i$ into the following sets:
-   \begin{enumerate}
-       \item the set $B$ of bad nodes;
-       \item the set $N_1$ of leaves;
-       \item the set $N_{\ge 3}$ of nodes having degree at least 3;
-       \item the set $N_2$ of nodes having degree 2 that are not bad.
-   \end{enumerate}
-   \begin{align*}
-     b_i & = n_i - |N_1|- |N_{\ge 3}|-|N_2| \\
-	   & > n_i - 2|N_1|-|N_2| & \text{since $|N_1|> |N_{\ge 3}|$} \\
-         & \ge  n_i - 2\kappa_i -|N_2| 
-	   & \text{(since, by \lemref{one-caressed-leaf}, $\kappa_i\ge |N_1|$)} \\
-           & \ge  n_i - 3\kappa_i 
-           & \text{(since each node in $N_2$ contains a caressed face)}
-    \end{align*}
-    Thus, we have
-    \[
-          n_i-3\kappa_i \le b_i \le (1-\epsilon)n_i
-    \]
-    and rewriting gives 
-    \begin{equation}
-      \kappa_i \ge \epsilon n_i/3 \enspace . \eqlabel{blech}
-    \end{equation}
-    If $\kappa_i \ge \tau_i/6$, then the proof is complete.  On the other hand, if $\kappa_i \le \tau_i/6$ then, by \lemref{few-caressed-implies-many-nodes}, $n_i \ge \tau_i/8$. Combining this with \eqref{blech}  gives
-    \[
-      \kappa_i \ge \epsilon n_i/3 \ge \epsilon\tau_i/24 = \Omega(\epsilon \tau_i) \enspace . \qedhere
-    \]
-\end{proof}
-
-\subsection{Interactions Between Bad Nodes}
-
-We have now reached a point in which we know that the vast
-majority of nodes in $T_0$ and $T_1$ are bad nodes, otherwise
-\lemref{most-nodes-are-bad} implies that a constant fraction of the
-faces touched by $C$ are caressed by $C$.  At this point, we are ready
-to study interactions between bad nodes of $T_0$ and bad nodes of $T_1$.
-
-
-\begin{lem}\lemlabel{common-face}
-   If $u$ is a bad node then there is a single face $f$ of $\dual{T}$
-   that is contained in $u$ and that contains all edges of $C\cap u$.
-\end{lem}
-
-\begin{proof}
-   First observe that, since $u$ has degree 2, $C\cap u$ has exactly
-   two connected components $C_1$ and $C_2$. Thus $u$'s boundary
-   consists of $C_1$, $C_2$ and two chord paths $P_1$ and $P_2$.
-
-   If $C\cap u$ is not contained in a single face of $\dual{T}$, then
-   some path $P$ with endpoints on the boundary of $u$ and internal
-   vertices in the interior of $u$ separates two edges of $E(C)$ on the
-   boundary of $u$.  There are a few cases to rule out:
-   \begin{enumerate}
-       \item $P$ has both endpoints on $C_i$ for some $i\in\{1,2\}$. In
-       this case, $P$ is a chord path and, by \lemref{one-caressed}
-       $u$ contains a face that is caressed by $C$, contradicting the
-       assumption that $u$ is a bad node.
-
-       \item $P$ has one endpoint on $C_i$ and one endpoint on $P_j$
-       for some $i,j\in\{1,2\}$.  In this case, $P\cup P_j$ contains a
-       chord path with both endpoints on $C_i$, again contradicting the
-       assumption that $u$ is a bad node.
-
-       \item $P$ has one endpoint on $P_1$ and one endpoint on $P_2$.
-       In this case, $P\cup P_1\cup P_2$ contains a chord path with both
-       endpoints on $C_1$, again contradicting the assumption that $u$
-       is a bad node.
-
-       \item $P$ has one endpoint on $C_1$ and one endpoint on $C_2$.
-       The path $P$ is not a keeper, otherwise it would have split $u$
-       into two nodes.	Therefore, it must be the case that $P$ contains
-       an internal vertex.  Let $S_1$ be the set of internal vertices
-       of $P$ and let $S_2$ be the set of vertices on the boundary
-       of $u$, not including the endpoints of $P$.  Since $\dual{T}$
-       is 3-connected, there is a path from $S_1$ to $S_2$ that does
-       not contain any endpoint of $P$.  The shortest such path, $P'$,
-       does not contain any edges of $P$.  Again, using portions of $P$,
-       $P_1$, $P_2$, and $P'$ we can construct a chord path, contained
-       in $u$, with both endpoints on $C_1$ or both endpoints on $C_2$,
-       contradicting the assumption that $u$ is a bad node.
-\end{enumerate}
-\end{proof}
-
-The following lemma shows that a bad node $u$ in $T_0$ and a bad node $w$
-in $T_1$ share at most one edge of $C$.
-
-\begin{lem}\lemlabel{bad-one-shared-edge}
-   If nodes $u$ in $T_0$ and $w$ in $T_1$ are bad nodes that share at
-   least one edge of $C$, then $u$ and $w$ share exactly one edge of $C$.
-\end{lem}
-
-\begin{proof}
-   Suppose $u$ and $w$ share two edges $e_1$ and $e_2$ of $C$.  Then,
-   by \lemref{common-face}, there is a common face $f_u$ in $u$ that
-   contains $e_1$ and $e_2$, Similarly, there is a common face $f_w$
-   contained in $w$ that contains both $e_1$ and $e_2$.  But this
-   contradicts \lemref{one-shared-edge}.
-\end{proof}
-
-
-\begin{lem}\lemlabel{one-edge-between}
-   If $u$ and $w$ are bad nodes of $T_i$ sharing a common chord path $P$,
-   then $P$ is a single edge.
-\end{lem}
-
-\begin{proof}
-   By \lemref{common-face}, $u$ and $w$ have the first edge of $P$ in
-   common and the last edge of $P$ in common.  \lemref{one-shared-edge}
-   therefore implies that the first and last edge of $P$ are the same,
-   so $P$ has only one edge.
-\end{proof}
-
-\subsection{Really Bad Nodes}
-
-
-At this point we will start making use of the assumption that the
-triangulation $T$ has maximum degree $\Delta$, which is equivalent to
-the assumption that each face of $\dual{T}$ has at most $\Delta$ edges
-on its boundary.
-
-\begin{obs}\obslabel{degree-touched}
-  If $T$ has maximum degree $\Delta$ and $C$ has length $\ell$, then
-  the number of faces $\tau$ of $\dual{T}$ touched by $C$ is at least 
-  $2\ell/\Delta$.  At least $\ell/\Delta$ of these faces are in
-  the interior of $C$ and at least $\ell/\Delta$ of these faces are
-  in the exterior of $C$.
-\end{obs}
-
-\begin{proof}
-  Orient the edges of $C$ counterclockwise so that, for each edge
-  $e$ of $C$, the face of $\dual{T}$ to the left of $e$ is in $C$'s
-  interior and the face of $\dual{T}$ to the right of $e$ is in $C$'s
-  exterior.  Each face of $\dual{T}$ has at most $\Delta$ edges.
-  Therefore, the number of faces to the right of edges in $C$ is
-  at least $\ell/\Delta$. The same is true for the number of faces
-  of $\dual{T}$ to the left of edges in $C$.
-\end{proof}
-
-For a node $u$ of $T_i$, we define $N(u)$ as the set of nodes in $T_0$
-and $T_1$ (excluding $u$) that share an edge of $\dual{T}$ with $u$.
-Note that $N(u)$ contains the neighbours of $u$ in $T_i$ as well as
-nodes of $T_{1-i}$ with which $u$ shares an edge of $C$.  We say that
-a node $u$ is \emph{really bad} if $u$ and all nodes in $N(u)$ are bad.
-
-\begin{lem}\lemlabel{lots-of-really-bad}
-  For every sufficiently small $0<\alpha < 1/2$,  
-  if $T$ has maximum degree $\Delta$, $C$ has length $\ell$, and the number
-  $\kappa$, of faces caressed by $C$ is at most $\alpha\ell/\Delta^2$, then
-  the number of really bad nodes in $T_0$ is at least $n_0-O(\alpha n_0)$.
-\end{lem}
-
-\begin{proof}
-  First consider the tree $T_0$.  From \obsref{degree-touched},
-  we know that $\tau_0\ge \ell/\Delta$.  By assumption,
-  $\kappa_0\le\kappa\le \alpha\ell/\Delta^2 < \tau_0/6$
-  so, by \lemref{few-caressed-implies-many-nodes}, $n_0 \ge
-  \tau_0/8=\Omega(\ell/\Delta)$.
-  
-  Let $\epsilon=a\alpha/\Delta$ for some $a>0$ to be discussed shortly.
-  By \lemref{most-nodes-are-bad}, if $b_0 < (1-\epsilon) n_0$, then
-  \[ 
-      \kappa \ge \kappa_0 = \Omega(\epsilon\tau_0)
-               = \Omega(\epsilon\ell/\Delta)
-               = \Omega(a\alpha\ell/\Delta^2) 
-               \enspace .
-  \]
-  For sufficiently large, constant, $a$ this violates our assumption
-  that $\kappa \le \alpha\ell/\Delta^2$.
-  Therefore, we may assume that $b_0\ge (1-\epsilon)n_0$, i.e., most nodes
-  of $T_0$ are bad.
-
-  We now want to study how many of the bad nodes in $T_0$ are really bad.
-  Each node $w$ of $T_0$ is in $N(u)$ for at most $\delta_w$ bad nodes
-  $u$ in $T_0$.  Let $A$ be the set of nodes in $T_0$ that are not
-  bad and partition $A$ into $A_1$ (leaves), $A_2$ (degree-2 nodes)
-  and $A_{\ge 3}$ (nodes of degree at least 3).  We make use of the
-  following inequality:
-	\begin{equation}
-		|A_1| = 2 + \sum_{w\in A_3}(\delta_w-2) \ge \sum_{w\in A_3}(\delta_w-2)
-		\ge \sum_{w\in A_3}\delta_w/3 \enspace ,  \eqlabel{triple}
-	\end{equation}
-  which is true because $x-2\ge x/3$ for all $x\ge 3$. 
-  Now we have 
-  \begin{align*}
-   \sum_{w\in A}\delta_w 
-    & = \sum_{w\in A_1}\delta_w 
-         + \sum_{w\in A_2}\delta_w 
-         + \sum_{w\in A_{\ge 3}}\delta_w \\
-	  & \le |A_1| + 2|A_2| + 3|A_1| & \text{(by \eqref{triple})}\\
-    & \le 6\kappa & \text{(since $\kappa_w\ge 1$ for each $w\in A_1\cup A_2$)}\\
-    & \le 6\alpha\ell/\Delta^2 & \text{(by assumption)}\\
-    & = O(\alpha n_0/\Delta) & \text{(since $n_0=\Omega(\ell/\Delta)$)}\enspace .
-  \end{align*}
-  That is, the set of non-bad nodes in $T_0$ prevents at most $O(\alpha
-  n_0/\Delta)$ bad nodes of $T_0$ from being really bad. Next we account
-  for how nodes in $T_1$ prevent bad nodes in $T_0$ from being really bad.
-
-  Let $A'$ be the set of non-bad nodes in $T_1$.  For two
-  nodes $u$ in $T_0$ and $w$ in $T_1$,  $w\in N(u)$ if and only if $w$
-  and $u$ share an edge of $C$.  The number of edges of $C$ incident to a node $w$ is at most $(\Delta-1)\tau_w < \Delta\tau_w$.  Therefore, we can upper bound the number of bad nodes in $T_0$ that are prevented from being really bad by some node in $T_1$ as
-  \begin{align*}
-   \sum_{w\in A'}\Delta \tau_w  
-    & \le  \sum_{w\in A'}2\Delta(\kappa_w + \delta_w) & \text{(by \lemref{many-caressed-or-high-degree})} \\
-    & \le  2\Delta\kappa + \sum_{w\in A'}2\Delta\delta_w \\
-    & < 2\Delta\kappa + 12\Delta\kappa & \text{(by the same argument as above)}\\
-    & = 14\Delta\kappa \\
-    & \le 14\alpha\ell/\Delta & \text{(by assumption)}\\
-    & = O(\alpha n_0) & \text{(since $n_0=\Omega(\ell/\Delta)$)}
-  \end{align*}
-  Therefore, the number of bad nodes in $T_0$ is at least
-  $(1-\epsilon)n_0$ and the number of these that are really bad is
-  at least $(1-\epsilon)n_0 - O(\alpha n_0) = n_0-O(\alpha n_0)$,
-  as required.
-\end{proof}
-
-For a node $u$ of $T_i$, we define $N^0(u) = \{u\}$ and, for any $r\in\N$,
-we define $N^{r}(u)=\bigcup_{w\in N^{r-1}(u)} N(w)$.   We say that a node
-$u$ in $T_i$ is \emph{really$^{r}$ bad} if $u$ is bad and all nodes in
-$N^r(u)$ are bad.  The proof of the following lemma is a straightforward
-generalization of the proof of \lemref{lots-of-really-bad}.
-
-\begin{lem}\lemlabel{lots-of-really-i-bad}
-  For any constant $i\in\N$ and every sufficiently small $0<\alpha < 1/2$,  
-  if $T$ has maximum degree $\Delta$, $C$ has length $\ell$, and the number,
-  $\kappa$, of faces caressed by $C$ is at most $\alpha\ell/\Delta^{i+1}$, then
-  the number of really$^i$ bad nodes in $T_0$ is at least $n_0-O(\alpha n_0)$.
-\end{lem}
-
-For our purposes, it will be sufficient to work with bad ($i=0$), really
-bad $(i=1$), and really really bad ($i=2$) nodes.
-
-\subsection{Tree/Cycle Surgery}
-
-We summarize the situation so far.  We are left with the case where
-$C$ has length $\ell$ and therefore touches $\Omega(\ell/\Delta)$
-faces.  To complete the proof of \thmref{main} we must deal with
-the situation where $C$ caresses $o(\ell/\Delta^4)$ faces and
-therefore each of $T_0$ and $T_1$ has $o(\ell/\Delta^4)$ leaves 
-(\lemref{one-caressed-leaf}),
-$\Omega(\ell/\Delta)$ nodes (\lemref{few-caressed-implies-many-nodes}),
-and the fraction of really really bad nodes in $T_0$ and $T_1$ is
-$1-O(1/\Delta^2)$ (\lemref{lots-of-really-i-bad}). 
-
-
-%\figref{few-caressed}
-%illustrates an extreme example of this, in which $C$ caresses only 4
-%faces of $\dual{T}$, and $T_0$ and $T_1$ each have only 2 non-bad nodes,
-%X non-really bad nodes, and Y non-really$^2$ bad nodes.  
-
-To handle cases like these, the only option is to perform surgery on
-the cycle $C$ to increase the number of caressed nodes. In particular,
-our strategy is to perform modifications to $C$ that increase the number
-of faces caressed by $C$.
-%Before finishing up, we need a final
-%lemma that describes which nodes of $T_0$ and $T_1$ survive when the
-%cycle $C$ is modified:
-%
-%\begin{lem}\lemlabel{survivors}
-%   Let $C$ and $C'$ be two cycles in $\dual{T}$ and, for each $i\in\{0,1\}$, let $T_i$ and $T_i'$ be the resulting trees.  Then a node $u$ in $T_i$ appears in $T_i'$ if the following conditions are satisfied:
-%  \begin{compactenum}
-%     \item $u\cap C = u\cap C'$; and
-%     \item for every node $w$ adjacent to $u$ in $T_i$ and every face $f$ of $\dual{T}$ in $w$, $f$ is pinched by $C$ if and only if $f$ is pinched by $C'$.
-% \end{compactenum}
-%\end{lem}
-%
-%\begin{proof}
-%   This proof is just definition checking.
-%   The node $u$ appears in $T_i'$ if (i)~each of the keeper paths
-%   (for $C$) on the boundary of $u$ are also keeper paths for $C'$ and
-%   (ii)~there is no keeper path for $C'$ that contains edges in the
-%   interior of $u$.  The latter condition is satisified, since a keeper
-%   path is always contained in a single pinched face and, since $u\cap
-%   C=u\cap C'$, the set of faces of $\dual{T}$ contained in $u$ that are
-%   pinched by $C$ is exactly the same as the set of faces contained in
-%   $u$ that are pinched by $C'$.
-%
-%   Thus, all we need to verify is that the keeper paths for $C$ on the
-%   boundary of $u$ are also keeper paths for $C'$.  Every such keeper path
-%   $P$ is on the boundary of $u$ and some neighbour $w$ of $u$ in $T_i$.
-%   Conditions 1 and 2 of the lemma ensure that every face of $\dual{T}$
-%   that shares an edge with $P$ is pinched by $C$ if and only if it is
-%   pinched by $C'$.  Therefore $P$ is a keeper path in $C$ if and only
-%   if it is a keeper path in $C'$.
-%\end{proof}
-At this point we are ready to complete the proof of \thmref{main}.
-
-\begin{proof}[Proof of \thmref{main}]
-By \lemref{cycle-to-curve}, it suffices to prove the existence of
-a cycle $C$ in $\dual{T}$ that caresses $\Omega(\ell/\Delta^4)$
-faces.  We begin by applying \lemref{lots-of-really-i-bad} with
-$i=2$ and $\alpha = \epsilon/\Delta$.  For sufficiently small, but constant,
-$\epsilon$, \lemref{lots-of-really-i-bad} implies that $\kappa =
-\Omega(\ell/\Delta^4)$ or the number of nodes in $T_0$ that are not really
-really bad is at most $O(\epsilon n_0/\Delta)$.  In the former case,
-$C$ caresses $\Omega(\ell/\Delta^4)$ faces of $\dual{T}$ and we are done.
-
-In the latter case, consider the forest obtained by removing all
-nodes of $T_0$ that are not really really bad.  This forest has
-$(1-O(\epsilon/\Delta))n_0$ nodes.  We claim that it also has 
-$O(\epsilon n_0/\Delta)$
-components.  To see why this is so, let $L$ be the set of leaves in $T_i$
-and let $S$ be the set of non-leaf nodes in $T_i$ that are not really
-really bad.  Observe that it is sufficient to upper bound the number, 
-$k$ of components in $T_i-S$.
-
-We have
-$|L|\le |S|+|L|=  O(\epsilon n_0/\Delta)$ and
-$k=\sum_{u\in S}(\deg_{T_i}(u)-1)$.
-Furthermore,
-\[
-    O(\epsilon n_0/\Delta) \ge |L| \ge \sum_{u\in S}(\deg_{T_i}(u)-2)
-     = |S| + \sum_{u\in S}(\deg_{T_i}(u)-1) = |S| + k \enspace .
+The (receiver-centric) \emph{interference} at any point $x\in\R^d$ is
+\[  
+  I_G(x) = |\{v\in V(G): x\in d_G(v) \}| \enspace .
 \]
-Therefore $k\le |S|+k =  O(\epsilon n_0/\Delta)$, as claimed. 
+The (maximum receiver-centric) \emph{interference} of $G$ is
+\[
+   I(G) = \max\{ v\in V(G): I_G(v) \} \enspace ,
+\]
+and the the (maximum receiver-centric) \emph{interference} of a point set $P\subset\R^d$ is
+\[
+  \min\{ I(G) : \mbox{$G$ is connected and $V(G)=P$} \}\enspace .
+\]
 
-Thus the forest obtained by removing all really really bad nodes from
-$T_i$ has at most $O(\epsilon n_0/\Delta)$ components, each of which is
-a path.  At least one of these paths contains $\Omega(\Delta/\epsilon)$
-nodes. In particular, for a sufficiently small constant $\epsilon$,
-one of these components, $X$, has at least $5\Delta$ nodes.
+\citet{devroye.morin:note} show that, for dimensions $d=1,2$, and a i.u.d.\ $n$-point set $P\subset\R^d$
+\[
+  \E[I(P)] \in \Omega\left((\log n)^{1/4}\right) \cap O\left((\log n)^{1/3}\right)  \enspace .
+\]
+For constant $d\ge 3$, they obtain nearly the same result except for an additional $\log\log n$ factor in the upper bound.
 
-%The nodes in the path $X$ have a particularly simple structure. Each
-%node $u$ in $X$ is bad and is adjacent, in $T_0$ to two bad nodes so,
-%by \lemref{one-edge-between}, $u$ has exactly two edges $e_1$ and $e_2$
-%that are not in $C$.  Furthermore, by \lemref{common-face}, all four
-%endpoints of $e_1$, and hence $e_1$ and $e_2$ belong to a common face
-%of $\dual{T}$ that also contains all edges of $u\cap C$.  Therefore,
-%each node $u$ in $X$ consists of a single face of $\dual{T}$.
+In the current paper, we obtain the tight upper bound
+\[
+  \E[I(P)] \in O\left((\log n)^{1/4}\right)
+\]
+in case $d=1$.
 
-Consider some node $u$ in $X$, and let $C_a$ and $C_b$ be the
-two components of $u\cap C$. Observe that $T_1[N(u)]$ consists
-of two paths $a_1,\ldots,a_r$ and $b_1,\ldots,b_s$ of bad nodes
-where each $a_1,\ldots,a_r$ contains an edge of $C_a$ and each of
-$b_1,\ldots,b_r$ contains an edge of $C_b$. Note that it is
-possible that $a_i=b_j$ for some values of $i$ and $j$, but everything
-stated thus far, and subsequently, is still true. It follows from
-\lemref{bad-one-shared-edge} that among any sequence of $\Delta$
-consecutive nodes in $X$, at least one node has $r\ge 2$ and therefore $|N(u)|\ge 5$.  Let $u$ be any such node that is not among the first $2\Delta$
-or last $2\Delta$ nodes of $X$.  Such a $u$ always exists because $X$
-contains at least $5\Delta$ nodes.
 
-Let $x_0=u$. We now describe some of the nodes in the vicinity of $u$ (refer to \figref{rrbad}):
-\begin{enumerate}
-  \item there is a path
-    $x_{2\Delta},\ldots,x_1,x_0,y_1,\ldots,y_{2\Delta}$
-    in $T_0$ consisting entirely of really really bad nodes.
-  \item some really bad node $a_1$ of $T_1$ shares an edge with each of
-    $x_0,\ldots,x_i$ for some $i\in\{1,\ldots,\Delta-4\}$.
-  \item some really bad node $a_2$ of $T_1$ shares an edge with $a_1$ and
-    and edge with $x_0$. 
-  \item some really bad node $a_0$ of $T_1$ shares an edge with $a_1$ and
-    with each of $x_i,\ldots,x_{i+j}$ for some $j\in\{0,\ldots,\Delta-4\}$.
-\end{enumerate}
+\section{The Proof}
 
-\begin{figure}
-   \begin{center}\includegraphics{figs/second-try-1}\end{center}
-   \caption{Nodes in the vicinity of $u=x_0$.}
-   \figlabel{rrbad}
-\end{figure}
+First some preliminary lemmas. 
 
-The surgery we perform focuses on the nodes $u$ and $a_1$.  Consider
-the two components of $C\cap a_1$. One of these components, $p$, shares
-an edge with $u$.  By \lemref{bad-one-shared-edge}, the other component,
-$q$, does not share an edge with $u$.  Imagine removing $u$ from $T_0$,
-thereby separating $T_0$ into a component $T_x$ containing $x_1$ and a
-component $T_y$ containing $y_1$.  Equivalently, one can think of removing
-the edges of $u$ from $C$ separating $C$ into two paths $C_x$ and $C_y$
-on the boundary of $T_x$ and $T_y$, respectively.  We distinguish between
-two major cases (see \figref{main-cases}):
 
-\begin{figure}
-   \begin{center}
-     \begin{tabular}{ccc}
-       \includegraphics{figs/cases-2} &
-       \includegraphics{figs/cases-3} &
-       \includegraphics{figs/cases-4} \\
-       (1) & (2) & $C'$
-     \end{tabular}
-   \end{center}
-   \caption{Cases 1 and 2 in the proof of \thmref{main} and the surgery performed in Case~2.}
-   \figlabel{main-cases}
-\end{figure}
-\begin{enumerate}
-   \item $q\subset C_x$.  In this case, we punt to Case~2. By
-   \lemref{one-edge-between} $a_1-C$ consists of two edges and exactly
-   one of these edges, $e$, is not incident to $u$. Instead, $e$ is
-   incident to    $x_i$.  We set $u'=x_i$, $x_1'=x_{i-1}$, $y_1'=x_{i+1}$,
-   and $a_1'=a_1$. Observe that $a_1'$ connects the two components of
-   $T_0-u'$ and shares edges with $u'$ and $x_1'$. This is exactly the
-   situation considered in Case~2.
+\subsection{Deterministic Results}
 
-   \item $q\subset C_y$.  At this point it is helpful to think of
-   $T_0$, $T_1$, and $C$ as a partition of $\R^2$, where nodes of $T_0$
-   are coloured red, nodes of $T_1$ are coloured blue and $C$ is the
-   (purple) boundary between red and blue.  To describe our modifications
-   of $C$, we imagine changing the colours of nodes.  The effect that
-   such a recolouring has on $C$ is immediately obvious: It produces a
-   1-dimensional set $C'$ that contains every (purple) edge contained in
-   the red-blue boundary. The set $C'$ is a collection of vertices and
-   edges of $\dual{T}$. Therefore, if $C'$ is a simple cycle, then $C'$
-   defines a new pair of trees $T_0'$ and $T_1'$.
+The following construction is well-known, but we include a proof for completeness:
 
-%   The relationship between $(T_0,T_1)$ and $(T_0',T_1')$
-%   takes more effort to understand.  This difficulty comes from the fact
-%   that there is no bijection between the nodes in $V(T_0)\cup V(T_1)$
-%   and the nodes in $V(T_0')\cup V(T_1')$.
+\begin{lem}\lemlabel{worst-case}
+  For any $k$-point set $P\subset\R$, there exists a connected graph $G$ with $V(G)=P$ such that, for any point $x\in\R$, $I_G(x) = O(\sqrt{k})$.
+\end{lem}
 
-   Refer to the right two thirds of \figref{main-cases} for a simple
-   (and misleading) example of what follows. For a full example,
-   refer to \figref{recolouring}.  The surgery we perform, recolours
-   $x_0,x_1,\ldots,x_{i-1}$ blue and recolours $a_1$ red.  Observe that,
-   because $q\subset C_y$ and $p$ contain an edge of $x_1$, this implies
-   that the red subset of $\R^2$ is simply-connected and its boundary $C'$
-   is a simple cycle consisting of edges of $T^*$.  The new trees $T_0'$
-   and $T_1'$ are therefore well defined.  We now make two claims that
-   will complete our proof.
-
-   \begin{figure}
-     \begin{center}
-       \begin{tabular}{cc}
-         \includegraphics{figs/surgery-1} &
-         \includegraphics{figs/surgery-2} 
-       \end{tabular}
-     \end{center}
-     \caption{Performing surgery on $C$ to obtain $C'$ that caresses $a_0$.}
-     \figlabel{recolouring}
-   \end{figure}
-
-   \begin{clm}\clmlabel{only-bad}
-      For each $i\in\{0,1\}$, and every node of $w$ $T_i$ that is not bad,
-      $C\cap w=C'\cap w$.  (Equivalently, for every face $f$ of $\dual{T}$
-      that is not a bad node of $T_0$ or $T_1$, $C\cap f=C'\cap f$.)
-   \end{clm}
-
-   \begin{clm}\clmlabel{a0-caressed}
-      The face $a_0$ is caressed by $C'$.
-   \end{clm}
-
-   These two claims complete the proof because, together,
-   they imply that $C'$ caresses one more node than $C$.  Indeed, by
-   definition, $C$ did not caress any faces belonging to bad nodes.
-   Therefore, the first claim implies that the faces of $\dual{T}$
-   caressed by $C'$ are a superset of those caressed by $C$.  The face
-   $a_0$ is a bad node of $T_i$ so it is not caressed by $C$ but the
-   second claim states that it is caressed by $C'$.  Therefore $C'$
-   caresses at least one more face than $C$.
-
-   This surgery recolours at most $\Delta-2\le \Delta$ nodes of $T_0$
-   and $T_1$, so the difference in length between $C$ and $C'$
-   is at most $\Delta^2$.  If we start with a cycle $C$
-   of length $\ell$, then we can perform this surgery at least
-   $\ell/(4\Delta^2)$ times before the length of $C$ decreases
-   to less than $\ell'=\ell/2$. If at some point during this process,
-   we are no longer able to perform this operation, it is because
-   $C$ caresses $\Omega(\ell'/\Delta^4)=\Omega(\ell/\Delta^4)$
-   faces of $\dual{T}$ and we are done.  By the end of this
-   process, the number of faces caressed by $C$ is at least
-   $\ell/(4\Delta^2)\in\Omega(\ell/\Delta^2)\subset\Omega(\ell/\Delta^4)$
-   and we are also done.
-
-   Thus, all that remains is to prove \clmref{only-bad} and
-   \clmref{a0-caressed}.
-
-   To prove \clmref{only-bad} we observe that $C$ and $C'$ differ only on
-   the boundaries of nodes that are recoloured.  Thus, it is sufficient
-   to show that all nodes in $R=\cup\{N(v): v\in\{x_0,\ldots,x_{i-1},a_1\}$
-   are bad.  But this is immediate since $x_0,\ldots,x_{i-1}$ are really
-   really bad and $a_1\in N(x_0)$, so $a_1$ is bad.  Since every node in $R$
-   share an edge with at least one of $\{x_0,\ldots,x_{i-1},a_1\}$, every
-   node in $R$ is therefore bad, as required.
-
-   To prove \clmref{a0-caressed} we consider the boundary of the face
-   $a_0$ of $T^*$ after the recolouring operation.  This boundary
-   consists of, in cyclic order:
-   \begin{enumerate}
-     \item  An edge shared between $a_0$ and $a_1$.  This edge is in
-       $C'$ since $a_0$ is in $T_1'$ and $a_1$ is in $T_0'$.
-
-     \item A path of edges shared with $x_i,\ldots,x_{i+j}$.
-      The nodes $x_i,\ldots,x_{i+j}$ are in $T_0$ and are distinct from
-      $x_0,\ldots,x_{i-1}$, so these nodes are in $T_0'$.
-      Therefore, this part of the bounary of $a_0$ is contained in $C'$.
-
-     \item An edge shared between $a_0$ and another node $a_{-1}=\neq
-     a_1$ of $T_1$. The faces of $a_{-1}$ are in $T_1'$ because $a_1$
-     is the only face that moves from $T_1$ to $T_0'$. ($T_1'$ is the
-     only face whose colour goes from blue to red.)
-
-     \item A path of edges that contains at least one edge of $C_y$. If
-     we fix an embedding in which the outer face is some face of $T_1$
-     other than $a_0$, then this path contains a portion of $C$ that
-     is traversed in clockwise order. By \lemref{bad-one-shared-edge}
-     This path does not contain any edge of $x_i$.  Furthermore, this
-     path does not contain any edges of $x_0,x_1,\ldots,x_{i-1}$ that
-     are not on the outer face of $T_0\cup a_1$.  Therefore, this path
-     consists of a (possibly empty) sequence of edges that are shared with
-     $x_0,\ldots,x_{i-1}$ followed by a sequence of edges from $C_y$. The
-     former part of this path is shared with nodes in $T_1'$, so these
-     edges are not in $C'$.  The latter part of this path is shared with
-     nodes in $T_y$, which are all contained contained in $T_0'$.
-  \end{enumerate} 
-  Therefore the intersection $C'\cap a_0$ consists of one connected
-  component so $a_0$ is caressed by $C'$. \qedhere
-\end{enumerate}
-%We also
-%name some other nodes of $T_1$: (i)~$a_0$ adjacent to $a_1$; (ii)~$a_{r+1}$
-%adjacent to $a_r$; (iii)~$b_0$ adjacent to $b_1$; (iv)~$b_{s+1}$ adjacent
-%  to $b_s$; (v)~the path $x_1,\ldots,x_{2\Delta}$ in $T_0$ that does not contain $u$; and (vi)~the
-%  path $y_1,\ldots,y_{2\Delta}$ in $T_0$ that does not contain $u$.
-%  
-%Observe that the path $x_{2\Delta},\ldots,x_1,u,y_1,\ldots,y_{2\Delta}$
-%consists entirely of really really bad nodes. The four nodes $a_0$, $a_{r+1}$,
-%$b_0$, and $b_{s+1}$ are really bad because they are adjacent to at least
-%one of these really really bad nodes.
-%
-%At this point it is helpful to think of $T_0$, $T_1$, and $C$ as a
-%partition of $\R^2$, where nodes of $T_0$ are coloured red, nodes of $T_1$
-%are coloured blue and $C$ is the (purple) boundary between red and blue.
-%To describe our modifications of $C$, we imagine changing the colours
-%of nodes.  The effect such a recolouring has on $C$ is immediately
-%obvious: The new cycle $C'$ contains every (purple) edge contained in
-%the red-blue boundary. This new cycle $C'$ defines a new pair of trees
-%$T_0'$ and $T_1'$.  While the relationship between $C$ and $C'$ is easy
-%to understand, the relationship between $(T_0,T_1)$ and $(T_0',T_1')$
-%takes more effort to understand.  This difficulty comes from the fact
-%that there is no bijection between the nodes in $V(T_0)\cup V(T_1)$
-%and the nodes in $V(T_0')\cup V(T_1')$.
-%
-%There are several cases to consider:
-%
-%\begin{enumerate}
-%   \item The path in $T_1$ from $a_1$ to $b_1$ does not contain $a_2$ or $b_2$.
-%     Refer to \figref{case1-surgery}.
-%\begin{figure}
-%   \begin{center}
-%     \includegraphics{figs/second-try-2}
-%     \includegraphics{figs/second-try-3}
-%   \end{center}
-%   \caption{Case 1 of the cycle surgery.}
-%   \figlabel{case1-surgery}
-%\end{figure}
-%
-%     The purple boundary $a_1\cap C$ has two connected components: $C_1$
-%     that contains an edge of $u$ and $C_2$.  Let $z_1,\ldots,z_t$ be
-%     the nodes of $T_0$ in $N(a_1)$ that contain an edge of $C_2$. Note
-%     that $z_1,\ldots,z_t$ form a path of bad nodes in $T_0$, since $u$
-%     is really really bad, $a_1\in N(u)$ and $z_1,\ldots,z_t\in N(a_1)$. We
-%     order $z_1,\ldots,z_t$ so that $z_1\in N(a_0)$.  Finally, let
-%     $z_0,z_{t+1}\not\in\{z_1,\ldots,z_t\}$ be the two nodes of $T_0$
-%     adjacent to $z_1$ and $z_t$, respectively. 
-%     %\note{PM}{This is not
-%     %completely unambiguous in the case $t=1$, but it doesn't matter for
-%     %what comes next.}  
-%     Note that $z_0$ and $z_{t+1}$ are not necessarily
-%     bad nodes.
-%
-%     The forest $T_0-\{u\}$ has two components, one of which contains $x_1$
-%     and the other contains $y_1$.  This latter component also contains
-%     $z_0,\ldots,z_{t+1}$.  The forest $T_1-\{a_1\}$ has two components
-%     one of which contains $a_r$ and the other of which contains $b_1$.
-%
-%     We make the following \emph{surgical modification} to $C$: we move
-%     $a_1$ to $T_0$ and we move $u$ to $T_1$.  Moving $u$ to $T_1$
-%     restores a path in $T_1$ from $a_r$ to $b_1$.  Moving $a_1$ to
-%     $T_0$ restores a path in $T_0$ from $y$ to $x$ (through $z_t$).
-%     We call the new cycle that results from this operation $C'$ and
-%     the resulting trees $T_0'$ and $T_1'$.
-%     
-%     \begin{clm}
-%       Every node of $T_0$ and $T_1$ is also present in $T_0'$ and $T_1'$,
-%       respectively, except possibly for the following bad nodes: $u$,
-%       $x_1,\ldots,x_{\Delta-1}$, $a_1,\ldots,a_{r}$, $b_1,\ldots,b_{s}$,
-%       and $z_1,\ldots,z_t$.
-%     \end{clm}
-%
-%     \begin{proof}[Proof of Claim]
-%     For most nodes $v$ in $T_0$ or $T_1$, this claim follows immediately
-%     from \lemref{survivors} since, for most nodes $v\cap C=v\cap C'$
-%     and $w\cap C=w\cap C'$ for every $w\in N(v)$.  The only nodes requiring 
-%     special consideration are the following:
-%     \begin{enumerate}
-%       \item[$z_0$:]  For this node $z_0\cap C=z_0\cap C'$ and $w\cap
-%       C=w\cap C'$ for all $w\in N(z_0)\setminus z_1$.  Thus, the only
-%       question is whether the chord path $P$ separating $z_0$ and $z_1$
-%       is a keeper for $C'$.
-%
-%       We claim that $z_1$ contains a single face of $\dual{T}$.  By
-%       \lemref{common-face}, there is a single face $f$ of $\dual{T}$ in
-%       $z_1$ that contains $z_1\cap C$ and, by \lemref{one-edge-between},
-%       this face also contains the single edge of $\dual{T}$ separating
-%       $z_1$ and $z_2$.  Suppose now, for the sake of contradiction,
-%       that $f$ does not contain the chord path $P$ separating $z_0$
-%       and $z_1$.  The face $f$ must, however, contain the first and last
-%       edge of $P$.  All edges of $f$ are in the auxilliary graph $H$ and
-%       therefore $P$ contains an internal node that has degree 3 in $H$.
-%       But this contradicts the fact that $P$ is a keeper for $C$.
-%
-%       Therefore $f$ contains $P$ on its boundary. Furthermore, $f$ is
-%       pinched by $C'$, so $P$ is in the auxilliary graph $H'$ for $C'$.
-%       Since the faces of $z_0$ pinched by $C$ and $C'$ are the same and
-%       $P$ is a keeper for $C$, it follows that $P$ is a keeper for $C'$.
-%
-%     \item[$z_{t+1}$:] The node $z_{t+1}$ appears in $T_0'$ for the same
-%     reason $z_0$ appears in $T_0'$.
-%
-%      \item[$y_1$:] The path $u,y_1,y_2,y_3$ consists entire of bad
-%      nodes. Therefore, $y_1$ and $y_2$ are
-%      faces of $\dual{T}$. The node $y_2$ is pinched by $C'$, therefore
-%      the edge $e$ common to $y_1$ and $y_2$ is a keeper. Therefore all
-%      edges of $y_1$ are in $C'\cup e$, so $y_1$ is a node of $T_0'$.
-%         
-%        
-%    \item[$x_\Delta$:] That $x_\Delta$ is a node of $T_0'$ follows from
-%    the fact that $x_{\Delta-1},x_{\Delta},x_{\Delta+1}$ is a path of
-%         bad nodes in $T_0$ and $x_{\Delta}\cap C=x_{\Delta}\cap C'$.
-%
-%       \item[$a_0$:] The node $a_0$ appears in $T_1'$ as a leaf for exactly the same reason $y_1$ appears in $T_0'$ as a leaf.
-%
-%       \item[$b_0,b_{s+1},a_{r+1}$:] The nodes $b_0$, $b_{s+1}$, and $b_{r+1}$ appear in $T_1'$ for the same reasons
-%       that $x_\Delta$ appears in $T_0'$.
-%     \end{enumerate}
-%     This completes the proof of the claim.
-%     \end{proof}
-%     The key point to take from all of this is that every node of $T_0$
-%     and $T_1$ that is not bad is also present in $T_0'$ and $T_1'$.
-%     %Furthermore, every non-bad node $w$ in $T_i$ has the same degree in $T_i$ and in $T_i'$.  
-%     Furthermore, the nodes $y_0$ and $a_0$, which were bad nodes in
-%     $T_0$ and $T_1$ are now leaves of $T_0'$ and $T_1'$.  Therefore,
-%     for each $i\in\{0,1\}$, the number of leaves in $T_i'$ is greater
-%     than the number of leaves in $T_i$.
-%
-%   \item The path in $T_1$ from $a_1$ to $b_1$ contains $b_2$ but not $a_2$.
-%     Refer to \figref{case2-surgery}.
-%   The surgery, and the proof, for this case is \emph{verbatim}
-%   the same as Case~1. (Indeed, reread Case~1 while referring to
-%   \figref{case2-surgery}.
-%
-%\begin{figure}
-%   \begin{center}
-%     \includegraphics{figs/second-try-x-2}
-%     \includegraphics{figs/second-try-x-3}
-%   \end{center}
-%   \caption{Case 2 of the cycle surgery.}
-%   \figlabel{case2-surgery}
-%\end{figure}
-%
-%
-% \item The path in $T_1$ from $a_1$ to $b_1$ contains $a_2$ and $b_2$.  This case is symmetric to Case~1.
-%
-%  \item The path in $T_1$ from $a_1$ to $b_1$ contains $a_2$ but not $b_2$.  This case is symmetric to Case~2.
-%\end{enumerate}
-%
-%In all four cases, the surgery on $C$ increases the number of leaves
-%in each of $T_1$ and $T_2$.  Furthermore, the only edges of $C$ that
-%are removed by this surgery are on the boundary of $u$.  Therefore,
-%this operation decreases the length of $C$ by at most $\Delta$.
-%
-%If we start with a cycle $C$ of length $\ell$, then we can perform
-%this operation at least $\ell/(2\Delta)$ times before the length of
-%$C$ decreases to less than $\ell'=\ell/2$. If at some point during
-%this process, we are no longer able to perform this operation, it is
-%because $C$ caresses $\Omega(\ell'/\Delta^4)=\Omega(\ell/\Delta^4)$
-%faces of $\dual{T}$ and we are done.  By the end of this process,
-%the number of leaves in each of $T_0$ and $T_1$ is at least
-%$\ell/(2\Delta)\in\Omega(\ell/\Delta)\subset\Omega(\ell/\Delta^4)$ and we
-%are also done.  This completes the proof of \thmref{main}.
+\begin{proof}
+  Let $P=\{x_1,\ldots,x_k\}$, labelled so that $x_1<\cdots< x_k$.  Let $r=\floor{\sqrt{k}}$ and $t=\floor{(k-1)/r}$.
+  Define $Y=\{y_0,\ldots,y_t\}$ so that, for each $i\in\{0,\ldots,t-1\}$, $y_i=x_{1+ir}$, and $y_t=x_k$.  The graph $G$ contains the path $y_0,\ldots,y_t$.  Additionally, $G$ contains an edge from each point $x_i\in P\setminus Y$ to the point in $y_j\in Y$ that minimizes $|x_i-y_j|$.
+  
+  What remains is to bound $I_G(x)$ for every point $x\in\R$.  The vertices in $Y$ contribute a total of at most $|Y|=t+1$ to $I_G(x)$.  Furthermore, if a point $x_i\in P\setminus Y$ contributes to $I_G(x)$ then there exists some $j\in\{0,\ldots,t-1\}$ such that $y_j \le x,x_i\le y_{j+1}$.  If $x\not\in Y$, then there are at most $r-1$ such points $x_i$. If $x\in Y$, then there are most $2r-2$ such points.  Thus, for any point $x\in\R^d$, $I_G(x)\le t + 2r -1 = O(\sqrt{k})$. 
 \end{proof}
 
-%\note{PM}{There's an annoying lopsidedness here. We can do surgeries $\Omega(\ell/\Delta)$ times before the length of $C$ really decreases. Unfortunately, we need the number of caressed faces to be $O(\ell/\Delta^4)$ in order to guarantee that we can perform a surgery. There's gotta be a better way\ldots}
+% The following lemma helps characterize situations in which the obvious graph produces high interference.
+% 
+% \begin{lem}\label{zeno-like}
+%   Let $G$ be a path $x_1,\ldots,x_k$ with $0<x_1<\cdots<x_k$. Then
+%   \begin{compactenum}
+%     \item $I_G(0) = |\{i\in\{1,\ldots,k-1\} : x_{i+1}-x_i \ge x_i\}|$.
+%     \item Let $J=\{i_0,\ldots,i_s\}\subseteq \{1,\ldots,k\}$ be the set of indices $i$ such that $x_{i+1}-x_i \ge x_i$ ordered so that $i_1<\cdots<i_s$.  Then, for any $j\in\{0,\ldots,s\}$, $x_{i_j+1}-x_{i_j} \ge x_1 2^j$.
+%   \end{compactenum}
+% \end{lem}
+% 
+% \begin{proof}
+%   Conclusion~1 follows immediately from definitions. For Conclusion 2, we can proceed by induction on $j$. For $j=0$, we have
+%   $x_{i_0+1}-x_{i_0} \ge x_{i_0} \ge x_1 =  x_1 2^0$, as required.
+% 
+%   For any integer $\ell$, let $J_{<\ell}=\{i\in J: i < \ell\}$.  For $j>1$, we have 
+%   \[ x_{i_j+1}-x_{i_j} \ge x_{i_j} 
+%   = x_1+\sum_{i = 1}^{i_j-1} (x_{i+1}-x_i)
+%   \ge x_1+\sum_{i\in J_{<i_j}}(x_{i+1}-x_i) 
+%   \ge x_1+x_1(2^{j}-1)
+%   = x_12^j \enspace . \qedhere
+%   \]
+% \end{proof}
+
+\subsection{Probabilistic Results}
+
+Let $z_1,\ldots,z_p$ be obtained from a sequence of independent $\mathrm{Gamma}(q)$ random variables $Z_1,\ldots,Z_p$ where $z_1=0$ and, for each $i\in\{1,\ldots,p\}$, $z_i=\sum_{j=1}^{i-1}Z_i$.  We now study some properties of the path $P_0=z_1,\ldots,z_p$.
+
+We will make use of the following two inequalities that, for any $t>1$, apply to a $\mathrm{Gamma}(q)$ random variable $Z$ (here, $a>0$ is an unspecified constant that I'm too lazy to look up right now):
+\begin{equation}
+  \Pr\{Z \ge tq\} \le \exp(-a(t-1)q) \eqlabel{gamma-tail-bound}
+\end{equation}
+and 
+\begin{equation}
+  \Pr\{Z < q/t\} \le \exp(-aq\log_2 t) \enspace . \eqlabel{gamma-head-bound}
+\end{equation}
+
+Fix some value $0< x \le 2Z_1$.  
+We say that an index $i\in\{1,\ldots,p\}$ is \emph{bad for $x$} if $z_i < x$ and $Z_i \ge (x-z_i)/2$.  Note that $i$ is bad for $x$ if and only if $z_i<x$ and $z_i$ contributes to $I_{P_0}(x)$.  Let $B_x=\{b_1,\ldots,b_s\}\subseteq\{1,\ldots,p\}$ be the set of indices that are bad for $x$, ordered so that $b_1<\cdots < b_s$.  Observe that $b_i \le b_{i-1}/2$ for each $i\in\{2,\ldots,s\}$.
+
+Consider the event $\mathcal{E}_{t,k}(x)$ defined as follows:
+\begin{compactenum}
+  \item $Z_1 \le q/2$;
+  \item at least $t$ indices among $\{1,\ldots,k\}$ are bad for $x$; and
+  \item $z_k \le x$.
+\end{compactenum}
+
+\begin{lem}
+  $\Pr\{\mathcal{E}_{t,k}\} \le \exp(-\Omega(k+qt^2))$
+\end{lem}
+
+\begin{proof}
+  The probability that $Z_1,\ldots,Z_k$ satisfies Condition~1 of $\mathcal{E}_{t,k}(x)$ is $\Pr\{Z_1 \le q/2\}$.
+  
+  Next, consider Condition~2 and
+  fix a set $1\le b_1<\cdots<b_t\le k$ of indices. For each $i\in\{b_1,\ldots,b_t\}$, the probability that $b_i$ is bad for $x$ given that $b_{1}\ldots,b_{i-1}$ are each bad for $x$ is at most $\Pr\{Z_{b_i} \le q/2^i\}$.  
+  
+  Finally, in order to satisfy Condition~3, it must be that $Z_i \le q/2$ for each $i\in\{2,\ldots,k\}\setminus\{b_1,\ldots,b_t\}$.
+  Taking the union bound over all $\binom{k}{t}$ choices of $b_1,\ldots,b_t$, we obtain 
+  \begin{align*}
+    \Pr\{E_{k,t}(x) &
+    \le \binom{k}{t}
+          \cdot \Pr\{Z \le q/2\}^{k-t}
+          \cdot \prod_{i=1}^t\Pr\{Z_{b_i}\le q/2^i\} \\
+    & \le \exp(t\ln k)
+          \cdot \Pr\{Z \le q/2\}^{k-t}
+          \cdot \prod_{i=1}^t\Pr\{Z_{b_i} \le q/2^i\} \\
+    & \le \exp(t\ln k - aq(k-t))
+          \cdot \prod_{i=1}^t\Pr\{Z_{b_i} \le q/2^i\} \\
+    & \le \exp(t\ln k - aq(k-t))
+          \cdot \prod_{i=1}^t\exp(-aqi) \\
+    & \le \exp\left(t\ln k - aq(k + \binom{t}{2}\right) \\
+    & = \exp\left(-\Omega(q(k+t^2))\right)
+  \end{align*}
+  where the final simplification can be obtained by considering the two cases $\ln k < t$ or $k \ge e^t$.
+\end{proof}
+
+Next, consider the possibly more likely event $\mathcal{E}'_{t,k}$ defined in exactly the same way as $\mathcal{E}_{t,k}$ except without Condition 1.  Using \eqref{gamma-tail-bound} and the fact that $Z_{b_i} \le Z_{b_{i-1}/2}$ we obtain the following corollary:
+
+\begin{lem}
+  $\Pr\{\mathcal{E}'_{k,t}\}\le \exp(-\Omega(2^t))+\exp(-\Omega(k+qt^2))$.
+\end{lem}
+
+Finally, we define $\mathcal{E}'_{t} = \bigcup_{k=t}^n \mathcal{E'}_{k,t}$ and, from the union bound, we obtain:
+
+\begin{lem}\lemlabel{good-one}
+  $\Pr\{\mathcal{E}'_{t}\}\le n\exp(-\Omega(2^t))+\exp(-\Omega(qt^2))$.
+\end{lem}
 
 
-\section{Discussion}
-\seclabel{discussion}
 
-%\note{PM}{Add a discussion here about the implications.}
 
-It remains an open problem to eliminate the dependence of our results
-on the maximum degree, $\Delta$, of $T$.  The next significant step
-is to resolve the following conjecture:
 
-\begin{conj}
-  If $T$ is a triangulation whose dual $\dual{T}$ has a cycle of length
-  $\ell$, then $\dual{T}$ has a cycle that caresses $\Omega(\ell)$
-  faces. (Therefore, by \lemref{cycle-to-curve} and \thmref{dalozzo}, 
-  $T$ has a collinear set of size $\Omega(\ell)$.)
-\end{conj}
+
+
+\subsection{The Construction}
+
+From this point on, let $X_0,\ldots,X_n$ be a sequence of independent exponential random variables each with mean 1 and for each $i\in\{1,\ldots,n\}$, let $x_i=\sum_{j=0}^{i-1} X_j$.  Let $P=\{x_1,\ldots,x_n\}$.  We will construct a low interference graph $G$, as follows:
+\begin{enumerate}
+  \item Let $q=\floor{\sqrt{\log n}}$ and $p=\floor{n/q}$.  $G$ contains a path $P_0=z_0,z_1,\ldots,z_p$ where $z_0=x_1$, $z_p=x_n$, and, for each $i\in\{1,\ldots,p-1\}$, $z_i = x_{1+iq}$.
+  \item For each $i\in\{0,\ldots,p-1\}$, $G$ contains a graph $G_i$ obtained by applying \lemref{worst-case} to the point set $\{x\in P: z_i \le x \le z_{i+1}\}$.
+\end{enumerate}
+
+We claim that, for any $x\in\R$,  $I_G(x) \in O((\log n)^{1/4})$.  
+
+First observe that
+\[
+    I_G(x) \le I_{P_0}(x) + \sum_{i=0}^p I_{G_i}(x) 
+\]
+We begin by bounding $I_{P_0}(x)$.
+
+\begin{lem}
+  For any $x\in\R$, $\Pr\{I_{P_0}(x) > c(\log n)^{1/4}\} \le n^{-\Omega(c)}$.
+\end{lem}
+
+\begin{proof}
+  Observe that, if $I_{P_0}(x) \ge 2t$ for some integer $t$, then we may assume, without loss of generality, that there are indices $1\le b_1<\cdots<b_t$ with $z_{b_t} \le x$ such that each of $x_{b_1},\ldots,x_{b_t}$ contributes to $I_{P_0}(x)$.  But this means that, in the sequence $Z_{b_1},Z_{b_1}+1,\ldots,Z_n$, the event $\mathcal{E}'_{t}(x-x_{b_1})$ has occurred.  By \lemref{good-one}, the probability that this occurs is at most
+  \[
+     \Pr\{\mathcal{E}_t\} \le \exp(-\Omega(2^t)) + \exp(-\Omega(qt^2)) = \exp(-\Omega(c\log n)) = n^{-\Omega(c)}
+  \]
+  for $t=c(\log n)^{1/4}$.  We complete the proof by applying the union bound over all $n$ possible choices of $b_1$.
+\end{proof}
+
+Hmmmm. One issue here is that our construction actually contains a path through every $(\log n)^{1/4}$ vertex. This will probably generate interference $(\log n)^{3/8}$.
+
+  
+  
+% 
+% 
+% 
+% \end{proof}
+% 
+% 
+% 
+% 
+% The only obvious quantity in the preceding formula is $I_{G_i(x)}$
+% 
+% 
+
+
+
+
+
+
+
+
 
 
 \section*{Acknowledgement}
 
-Much of this research took place during the Sixth Workshop on Order and
-Geometry held in Ciążeń, Poland, September 19--22, 2018.  The authors
-are grateful to the organizers, Stefan~Felsner and Piotr~Micek, and to
-the other participants for providing a stimulating research environment.
+This research was initiated at the Fourteenth Annual Workshop on Probability and Combinatorics at McGill University's Bellairs Research Institute, March 29--April 5, 2019.  The authors are grateful to the workshop organizers and participants for providing a stimulating research environment.
 
 
-\bibliographystyle{plain}
-\bibliography{collsets}
+\bibliographystyle{apalike}
+\bibliography{interference3}
 
 \end{document}
-
-
-
-
-
-
-
-
-
